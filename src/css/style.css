@@ -37,4 +37,10 @@
   .button-primary {
     @apply bg-slate-200 dark:bg-indigo-500 dark:hover:bg-indigo-600 hover:bg-slate-300 rounded-md font-medium px-5 py-2;
   }
+  .placeholder-wrapper {
+    @apply flex flex-row;
+  }
+  .letter {
+    @apply mx-2 text-3xl font-medium;
+  }
 }
