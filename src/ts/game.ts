@@ -101,9 +101,6 @@ export const startGame = (): void => {
   gameDiv.innerHTML = createPlaceHoldersHTML();
   gameDiv.innerHTML += `<p id="tries" class="mt-2">TRIES LEFT: <span id="tries-left" class="font-medium text-red-600">10</span></p>`;
 
-  const hangmanImg = createHangManImg();
-  gameDiv.prepend(hangmanImg);
-
   const keyboardDiv = createKeyboard();
   keyboardDiv.addEventListener('click', (e) => {
     if (e.target.tagName.toLowerCase() === 'button') {
@@ -112,6 +109,9 @@ export const startGame = (): void => {
       checkLetter(letterButton.id);
     }
   });
+
+  const hangmanImg = createHangManImg();
+  gameDiv.prepend(hangmanImg);
 
   gameDiv.appendChild(keyboardDiv);
 };
