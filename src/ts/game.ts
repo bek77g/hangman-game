@@ -125,5 +125,10 @@ export const startGame = (): void => {
     "<button id='quit' class='button-secondary px-2 py-1 mt-4'>Quit</button>"
   );
 
-  document.getElementById('quit').onclick = () => stopGame('quit');
+  document.getElementById('quit').onclick = () => {
+    const sure = confirm('Are you sure you want to quit and lose the game?');
+    if (sure) {
+      stopGame('quit');
+    }
+  };
 };
