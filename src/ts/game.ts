@@ -4,9 +4,11 @@ import { KEYBOARD_LETTERS } from './consts';
 const gameDiv: HTMLDivElement = document.getElementById('game');
 const logoH1: HTMLHeadingElement = document.getElementById('logo');
 
+let triesLeft: number;
+
 const createPlaceHoldersHTML = (): string => {
-  const word = sessionStorage.getItem('word');
-  const wordArray = word.split('');
+  const word: string = sessionStorage.getItem('word');
+  const wordArray: array = word.split('');
   const placeholdersHTML: string = wordArray.reduce((acc, _, idx) => {
     return acc + `<h2 id="letter_${idx}" class="letter"> _ </h2>`;
   }, '');
@@ -40,8 +42,30 @@ const createHangManImg = (): HTMLImageElement => {
   return image;
 };
 
+const checkLetter = (letter): void => {
+  const word: string = sessionStorage.getItem('word');
+  const inputLetter: string = letter.toLowerCase();
+  if (!word.includes(inputLetter)) {
+    const triesCounter: HTMLSpanElement = document.getElementById('tries-left');
+    triesLeft -= 1;
+    triesCounter.innerText = triesLeft;
+    const hangmanImg: HTMLImageElement = document.getElementById('hangman-img');
+    hangmanImg.src = `images/hg-${10 - triesLeft}.png`;
+  } else {
+    const wordArray: array = Array.from(word);
+    wordArray.forEach((currentLetter: string, idx) => {
+      if (currentLetter === inputLetter) {
+        document.getElementById(`letter_${idx}`).innerText =
+          inputLetter.toUpperCase();
+      }
+    });
+  }
+};
+
 export const startGame = (): void => {
+  triesLeft = 10;
   logoH1.classList.add('logo-sm');
+
   const randomIndex: number = Math.floor(Math.random() * WORDS.length);
   const wordToGuess: string = WORDS[randomIndex];
   sessionStorage.setItem('word', wordToGuess);
@@ -52,5 +76,14 @@ export const startGame = (): void => {
   const hangmanImg = createHangManImg();
   gameDiv.prepend(hangmanImg);
 
-  gameDiv.appendChild(createKeyboard());
+  const keyboardDiv = createKeyboard();
+  keyboardDiv.addEventListener('click', (e) => {
+    if (e.target.tagName.toLowerCase() === 'button') {
+      const letterButton: HTMLButtonElement = e.target;
+      letterButton.disabled = true;
+      checkLetter(letterButton.id);
+    }
+  });
+
+  gameDiv.appendChild(keyboardDiv);
 };
