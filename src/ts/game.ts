@@ -1,6 +1,7 @@
 import { GameStatus } from '../types/types';
 import { WORDS } from './consts';
 import { KEYBOARD_LETTERS } from './consts';
+import { decryptWord, encryptWord } from './utils';
 
 const gameDiv: HTMLDivElement = document.getElementById(
   'game'
@@ -13,7 +14,7 @@ let triesLeft: number;
 let winCount: number;
 
 const createPlaceHoldersHTML = (): string => {
-  const word: string = sessionStorage.getItem('word')!;
+  const word: string = decryptWord(sessionStorage.getItem('word'))!;
   const wordArray: string[] = word.split('');
   const placeholdersHTML: string = wordArray.reduce((acc, _, idx) => {
     return acc + `<h2 id="letter_${idx}" class="letter"> _ </h2>`;
@@ -49,7 +50,7 @@ const createHangManImg = (): HTMLImageElement => {
 };
 
 const checkLetter = (letter: string): void => {
-  const word: string = sessionStorage.getItem('word')!;
+  const word: string = decryptWord(sessionStorage.getItem('word'))!;
   const inputLetter: string = letter.toLowerCase();
   if (!word.includes(inputLetter)) {
     const triesCounter: HTMLSpanElement = document.getElementById(
@@ -98,7 +99,7 @@ const stopGame = (status: GameStatus): void => {
     'hangman-img'
   ) as HTMLImageElement;
 
-  const word: string = sessionStorage.getItem('word')!;
+  const word: string = decryptWord(sessionStorage.getItem('word'))!;
 
   if (status === 'win') {
     hangmanImg.src = 'images/hg-win.png';
@@ -121,7 +122,8 @@ export const startGame = (): void => {
 
   const randomIndex: number = Math.floor(Math.random() * WORDS.length);
   const wordToGuess: string = WORDS[randomIndex];
-  sessionStorage.setItem('word', wordToGuess);
+
+  sessionStorage.setItem('word', encryptWord(wordToGuess));
 
   gameDiv.innerHTML = createPlaceHoldersHTML();
   gameDiv.innerHTML += `<p id="tries" class="mt-2">TRIES LEFT: <span id="tries-left" class="font-medium text-red-600">10</span></p>`;
