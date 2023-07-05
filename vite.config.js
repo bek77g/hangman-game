@@ -1,3 +1,3 @@
 export default {
-  base: '/HangMan-Game-TS/',
+  base: '/hangman-game/',
 };
