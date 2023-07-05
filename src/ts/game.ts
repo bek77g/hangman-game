@@ -1,7 +1,6 @@
+import { GameStatus } from '../types/types';
 import { WORDS } from './consts';
 import { KEYBOARD_LETTERS } from './consts';
-
-type GameStatus = 'win' | 'lose' | 'quit';
 
 const gameDiv: HTMLDivElement = document.getElementById(
   'game'
