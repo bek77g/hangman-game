@@ -5,6 +5,7 @@ const gameDiv: HTMLDivElement = document.getElementById('game');
 const logoH1: HTMLHeadingElement = document.getElementById('logo');
 
 let triesLeft: number;
+let winCount: number;
 
 const createPlaceHoldersHTML = (): string => {
   const word: string = sessionStorage.getItem('word');
@@ -51,10 +52,16 @@ const checkLetter = (letter): void => {
     triesCounter.innerText = triesLeft;
     const hangmanImg: HTMLImageElement = document.getElementById('hangman-img');
     hangmanImg.src = `images/hg-${10 - triesLeft}.png`;
+    if (triesLeft === 0) stopGame('lose');
   } else {
     const wordArray: array = Array.from(word);
     wordArray.forEach((currentLetter: string, idx) => {
       if (currentLetter === inputLetter) {
+        winCount += 1;
+        if (winCount === word.length) {
+          stopGame('win');
+          return;
+        }
         document.getElementById(`letter_${idx}`).innerText =
           inputLetter.toUpperCase();
       }
@@ -62,8 +69,29 @@ const checkLetter = (letter): void => {
   }
 };
 
+const stopGame = (status: string): void => {
+  document.getElementById('placeholders').remove();
+  document.getElementById('tries').remove();
+  document.getElementById('keyboard').remove();
+
+  const game: HTMLDivElement = document.getElementById('game');
+
+  const word = sessionStorage.getItem('word');
+
+  if (status === 'win') {
+    document.getElementById('hangman-img').src = 'images/hg-win.png';
+    game.innerHTML += "<h2 class='result-header win'>You win!</h2>";
+  } else if (status === 'lose') {
+    game.innerHTML += "<h2 class='result-header lose'>You lost :(</h2>";
+  }
+
+  game.innerHTML += `<p>The word was: <span class="result-word">${word}</span></p><button id="play-again" class="button-primary px-5 py-2 mt-3">Play again</button>`;
+  document.getElementById('play-again').onclick = startGame;
+};
+
 export const startGame = (): void => {
   triesLeft = 10;
+  winCount = 0;
   logoH1.classList.add('logo-sm');
 
   const randomIndex: number = Math.floor(Math.random() * WORDS.length);
