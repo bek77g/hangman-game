@@ -14,7 +14,7 @@ let triesLeft: number;
 let winCount: number;
 
 const createPlaceHoldersHTML = (): string => {
-  const word: string = decryptWord(sessionStorage.getItem('word'))!;
+  const word: string = decryptWord(sessionStorage.getItem('word')!);
   const wordArray: string[] = word.split('');
   const placeholdersHTML: string = wordArray.reduce((acc, _, idx) => {
     return acc + `<h2 id="letter_${idx}" class="letter"> _ </h2>`;
@@ -50,7 +50,7 @@ const createHangManImg = (): HTMLImageElement => {
 };
 
 const checkLetter = (letter: string): void => {
-  const word: string = decryptWord(sessionStorage.getItem('word'))!;
+  const word: string = decryptWord(sessionStorage.getItem('word')!);
   const inputLetter: string = letter.toLowerCase();
   if (!word.includes(inputLetter)) {
     const triesCounter: HTMLSpanElement = document.getElementById(
@@ -99,7 +99,7 @@ const stopGame = (status: GameStatus): void => {
     'hangman-img'
   ) as HTMLImageElement;
 
-  const word: string = decryptWord(sessionStorage.getItem('word'))!;
+  const word: string = decryptWord(sessionStorage.getItem('word')!);
 
   if (status === 'win') {
     hangmanImg.src = 'images/hg-win.png';

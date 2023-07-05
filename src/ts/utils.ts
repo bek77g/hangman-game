@@ -24,7 +24,7 @@ export const darkModeHandler = (): void => {
   }
 };
 
-function generateRandomKey(length: number): void {
+function generateRandomKey(length: number): string {
   let key = '';
   const characters =
     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -37,7 +37,7 @@ function generateRandomKey(length: number): void {
 }
 
 export function encryptWord(word: string): string {
-  const key: string = generateRandomKey(word.length);
+  const key: string = generateRandomKey(word.length)!;
   let encryptedWord = '';
   for (let i = 0; i < word.length; i++) {
     const char = word[i];
