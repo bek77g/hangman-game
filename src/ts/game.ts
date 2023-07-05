@@ -1,15 +1,21 @@
 import { WORDS } from './consts';
 import { KEYBOARD_LETTERS } from './consts';
 
-const gameDiv: HTMLDivElement = document.getElementById('game');
-const logoH1: HTMLHeadingElement = document.getElementById('logo');
+type GameStatus = 'win' | 'lose' | 'quit';
+
+const gameDiv: HTMLDivElement = document.getElementById(
+  'game'
+) as HTMLDivElement;
+const logoH1: HTMLHeadingElement = document.getElementById(
+  'logo'
+) as HTMLHeadingElement;
 
 let triesLeft: number;
 let winCount: number;
 
 const createPlaceHoldersHTML = (): string => {
-  const word: string = sessionStorage.getItem('word');
-  const wordArray: array = word.split('');
+  const word: string = sessionStorage.getItem('word')!;
+  const wordArray: string[] = word.split('');
   const placeholdersHTML: string = wordArray.reduce((acc, _, idx) => {
     return acc + `<h2 id="letter_${idx}" class="letter"> _ </h2>`;
   }, '');
@@ -22,7 +28,7 @@ const createKeyboard = (): HTMLDivElement => {
   keyboard.classList.add('keyboard');
   keyboard.id = 'keyboard';
 
-  const keyboardHTML = KEYBOARD_LETTERS.reduce((acc, curr, idx) => {
+  const keyboardHTML = KEYBOARD_LETTERS.reduce((acc, curr) => {
     return (
       acc +
       `<button class="button-primary keyboard-button" id="${curr}">${curr}</button>`
@@ -43,18 +49,22 @@ const createHangManImg = (): HTMLImageElement => {
   return image;
 };
 
-const checkLetter = (letter): void => {
-  const word: string = sessionStorage.getItem('word');
+const checkLetter = (letter: string): void => {
+  const word: string = sessionStorage.getItem('word')!;
   const inputLetter: string = letter.toLowerCase();
   if (!word.includes(inputLetter)) {
-    const triesCounter: HTMLSpanElement = document.getElementById('tries-left');
+    const triesCounter: HTMLSpanElement = document.getElementById(
+      'tries-left'
+    ) as HTMLSpanElement;
     triesLeft -= 1;
-    triesCounter.innerText = triesLeft;
-    const hangmanImg: HTMLImageElement = document.getElementById('hangman-img');
+    triesCounter.innerText = triesLeft.toString();
+    const hangmanImg: HTMLImageElement = document.getElementById(
+      'hangman-img'
+    ) as HTMLImageElement;
     hangmanImg.src = `images/hg-${10 - triesLeft}.png`;
     if (triesLeft === 0) stopGame('lose');
   } else {
-    const wordArray: array = Array.from(word);
+    const wordArray: string[] = Array.from(word);
     wordArray.forEach((currentLetter: string, idx) => {
       if (currentLetter === inputLetter) {
         winCount += 1;
@@ -62,23 +72,34 @@ const checkLetter = (letter): void => {
           stopGame('win');
           return;
         }
-        document.getElementById(`letter_${idx}`).innerText =
-          inputLetter.toUpperCase();
+        (
+          document.getElementById(`letter_${idx}`) as HTMLHeadingElement
+        ).innerText = inputLetter.toUpperCase();
       }
     });
   }
 };
 
-const stopGame = (status: string): void => {
-  document.getElementById('placeholders').remove();
-  document.getElementById('tries').remove();
-  document.getElementById('keyboard').remove();
-  document.getElementById('quit').remove();
+const stopGame = (status: GameStatus): void => {
+  const placeholdersDiv: HTMLElement | null =
+    document.getElementById('placeholders');
+  const triesDiv: HTMLElement | null = document.getElementById('tries');
+  const keyboardDiv: HTMLElement | null = document.getElementById('keyboard');
+  const quitButton: HTMLElement | null = document.getElementById('quit');
 
-  const game: HTMLDivElement = document.getElementById('game');
-  const hangmanImg: HTMLImageElement = document.getElementById('hangman-img');
+  placeholdersDiv?.remove();
+  triesDiv?.remove();
+  keyboardDiv?.remove();
+  quitButton?.remove();
 
-  const word = sessionStorage.getItem('word');
+  const game: HTMLDivElement = document.getElementById(
+    'game'
+  ) as HTMLDivElement;
+  const hangmanImg: HTMLImageElement = document.getElementById(
+    'hangman-img'
+  ) as HTMLImageElement;
+
+  const word: string = sessionStorage.getItem('word')!;
 
   if (status === 'win') {
     hangmanImg.src = 'images/hg-win.png';
@@ -86,12 +107,12 @@ const stopGame = (status: string): void => {
   } else if (status === 'lose') {
     game.innerHTML += "<h2 class='result-header lose'>You lost :(</h2>";
   } else if (status === 'quit') {
-    logo.classList.remove('logo-sm');
+    logoH1.classList.remove('logo-sm');
     hangmanImg.remove();
   }
 
   game.innerHTML += `<p>The word was: <span class="result-word">${word}</span></p><button id="play-again" class="button-primary px-5 py-2 mt-5">Play again</button>`;
-  document.getElementById('play-again').onclick = startGame;
+  document.getElementById('play-again')?.addEventListener('click', startGame);
 };
 
 export const startGame = (): void => {
@@ -107,9 +128,10 @@ export const startGame = (): void => {
   gameDiv.innerHTML += `<p id="tries" class="mt-2">TRIES LEFT: <span id="tries-left" class="font-medium text-red-600">10</span></p>`;
 
   const keyboardDiv = createKeyboard();
-  keyboardDiv.addEventListener('click', (e) => {
-    if (e.target.tagName.toLowerCase() === 'button') {
-      const letterButton: HTMLButtonElement = e.target;
+  keyboardDiv.addEventListener('click', (e: MouseEvent) => {
+    const target = e.target as HTMLButtonElement;
+    if (target.tagName.toLowerCase() === 'button') {
+      const letterButton: HTMLButtonElement = target;
       letterButton.disabled = true;
       checkLetter(letterButton.id);
     }
@@ -125,10 +147,12 @@ export const startGame = (): void => {
     "<button id='quit' class='button-secondary px-2 py-1 mt-4'>Quit</button>"
   );
 
-  document.getElementById('quit').onclick = () => {
+  document.getElementById('quit')?.addEventListener('click', () => {
     const sure = confirm('Are you sure you want to quit and lose the game?');
     if (sure) {
       stopGame('quit');
     }
-  };
+  });
 };
+
+startGame();

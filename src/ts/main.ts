@@ -4,5 +4,7 @@ import { startGame } from './game';
 
 darkModeHandler();
 
-const startGameButton: HTMLButtonElement = document.getElementById('startGame');
+const startGameButton: HTMLButtonElement = document.getElementById(
+  'startGame'
+) as HTMLButtonElement;
 startGameButton.addEventListener('click', startGame);
