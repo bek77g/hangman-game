@@ -47,7 +47,3 @@ Contributions from the community are welcome! If you'd like to contribute to the
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
-
----
-
-Please note that this is just an example, and you can customize it to fit your project and preferences. If you have any additional information or specific requirements, please let me know, and I'll be happy to assist you in creating the perfect description for your Hangman Game project.
