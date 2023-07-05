@@ -73,19 +73,24 @@ const stopGame = (status: string): void => {
   document.getElementById('placeholders').remove();
   document.getElementById('tries').remove();
   document.getElementById('keyboard').remove();
+  document.getElementById('quit').remove();
 
   const game: HTMLDivElement = document.getElementById('game');
+  const hangmanImg: HTMLImageElement = document.getElementById('hangman-img');
 
   const word = sessionStorage.getItem('word');
 
   if (status === 'win') {
-    document.getElementById('hangman-img').src = 'images/hg-win.png';
+    hangmanImg.src = 'images/hg-win.png';
     game.innerHTML += "<h2 class='result-header win'>You win!</h2>";
   } else if (status === 'lose') {
     game.innerHTML += "<h2 class='result-header lose'>You lost :(</h2>";
+  } else if (status === 'quit') {
+    logo.classList.remove('logo-sm');
+    hangmanImg.remove();
   }
 
-  game.innerHTML += `<p>The word was: <span class="result-word">${word}</span></p><button id="play-again" class="button-primary px-5 py-2 mt-3">Play again</button>`;
+  game.innerHTML += `<p>The word was: <span class="result-word">${word}</span></p><button id="play-again" class="button-primary px-5 py-2 mt-5">Play again</button>`;
   document.getElementById('play-again').onclick = startGame;
 };
 
@@ -114,4 +119,11 @@ export const startGame = (): void => {
   gameDiv.prepend(hangmanImg);
 
   gameDiv.appendChild(keyboardDiv);
+
+  gameDiv.insertAdjacentHTML(
+    'beforeend',
+    "<button id='quit' class='button-secondary px-2 py-1 mt-4'>Quit</button>"
+  );
+
+  document.getElementById('quit').onclick = () => stopGame('quit');
 };
